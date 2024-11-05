@@ -85,32 +85,6 @@ def producto_demandado_FP(individuo, ordenes):
 
     return puntaje_total
 
-def producto_escaso(individuo, cedis):
-    # Crear un diccionario de disponibilidad de productos con la columna 'Producto' y 'Ubicado' del inventario
-    inventario_disponible = cedis.inventario.set_index('Producto')['Ubicado'].to_dict()
-    
-    # Definir productos escasos con un umbral (por ejemplo, cantidad < 10)
-    umbral_escasez = 850
-    productos_escasos = {producto for producto, cantidad in inventario_disponible.items() if cantidad < umbral_escasez}
-    
-    # Calcular el puntaje en función de la prioridad dada a los camiones que más aportan productos escasos
-    puntaje_total = 0
-    num_camiones = len(individuo)
-    
-    for posicion, camion in enumerate(individuo):
-        # Calcular la contribución del camión a los productos escasos
-        contribucion_escasa = sum(
-            cantidad for producto_info in camion.contenido
-            for producto, cantidad in producto_info.items()
-            if producto in productos_escasos
-        )
-        
-        # Aplicar una ponderación exponencial para amplificar la diferencia de orden
-        peso = (num_camiones - posicion) ** 2
-        puntaje_total += contribucion_escasa * peso
-
-    return puntaje_total
-
 def menor_producto(individuo):
     # Inicializar el puntaje total
     puntaje_total = 0

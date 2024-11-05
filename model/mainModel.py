@@ -1,6 +1,4 @@
 from scripts.estrategia_evolutiva import evolve
-from objects.patio import Patio
-from objects.cedis import CEDIS
 from utils.delete_cache import delete_pycache
 from utils.response import get_response
 from utils.load_data_as_objects import cargar_camiones, cargar_ordenes
@@ -44,7 +42,7 @@ def main(rutaArchivoOrdenes, orderDict):
     flag = 'DEMANDA'
     try:
         mejor_orden_demanda, _demanda, gens_demanda = evolve(
-            flag, camiones, ordenes, cedis)
+            flag, camiones, ordenes)
         result_demanda = [camion.id_camion for camion in mejor_orden_demanda]
         results["propuesta_demanda"] = result_demanda
         print("PROPUESTA GENERADA.")
@@ -57,7 +55,7 @@ def main(rutaArchivoOrdenes, orderDict):
 
     flag = "FP"
     try:
-        mejor_orden_FP, _FP, gens_FP = evolve(flag, camiones, ordenes, cedis)
+        mejor_orden_FP, _FP, gens_FP = evolve(flag, camiones, ordenes)
         result_FP = [camion.id_camion for camion in mejor_orden_FP]
         results["propuesta_FP"] = result_FP
         print("PROPUESTA GENERADA.")
@@ -69,7 +67,7 @@ def main(rutaArchivoOrdenes, orderDict):
 
     flag = "PK"
     try:
-        mejor_orden_PK, _PK, gens_PK = evolve(flag, camiones, ordenes, cedis)
+        mejor_orden_PK, _PK, gens_PK = evolve(flag, camiones, ordenes)
         result_PK = [camion.id_camion for camion in mejor_orden_PK]
         results["propuesta_PK"] = result_PK
         print("PROPUESTA GENERADA.")
@@ -82,7 +80,7 @@ def main(rutaArchivoOrdenes, orderDict):
     flag = "CARGA"
     try:
         mejor_orden_carga, _carga, gens_carga = evolve(
-            flag, camiones, ordenes, cedis)
+            flag, camiones, ordenes)
         result_carga = [camion.id_camion for camion in mejor_orden_carga]
         results["propuesta_carga"] = result_carga
         print("PROPUESTA GENERADA.")
