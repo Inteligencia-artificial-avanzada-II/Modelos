@@ -10,15 +10,6 @@ install_requirements()
 def main(rutaArchivoOrdenes, orderDict):
     errors = {}
 
-    # # Step 1: Procesar el archivo de entrada
-    # try:
-    #     process_data(f'{rutaArchivo}')
-    # except Exception as e:
-    #     errors["input_data"] = "Error al procesar los datos de entrada: " + \
-    #         str(e)
-    #     print(errors)
-    #     return get_response(errors)
-
     # Step 1: Cargar datos y crear los objetos
     try:
         # Consultamoos a fosas y obtenemos la fecha de hoy y todos los camiones en true
