@@ -13,3 +13,4 @@ class Config:
     FLASK_HOST = os.getenv(f'FLASK_HOST_{ENVIRONMENT}', "127.0.0.1")
     FLASK_PORT = os.getenv(f"FLASK_PORT_{ENVIRONMENT}", "5000")
     FLASK_DEBUG = str_to_bool(os.getenv(f"FLASK_DEBUG_{ENVIRONMENT}", "True"))
+    RUTA_ARCHIVO_ORDENES = os.getenv("RUTA_ARCHIVO_ORDENES", "")
