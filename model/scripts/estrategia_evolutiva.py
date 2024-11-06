@@ -1,22 +1,9 @@
 import random
-from model.scripts.fitness import producto_demandado, producto_demandado_FP, producto_demandado_PK, menor_producto, producto_escaso
-
-# Función de evaluación de la solución según la flag
-def fitness(individuo, ordenes, cedis, flag):
-    if flag == "DEMANDA":
-        return producto_demandado(individuo, ordenes)
-    elif flag == "FP":
-        return producto_demandado_FP(individuo,ordenes)
-    elif flag == "PK":
-        return producto_demandado_PK(individuo, ordenes)
-    elif flag == "CARGA":
-        return menor_producto(individuo)
-    else:
-        raise ValueError("Flag no reconocida. Use 'DEMANDA', 'ESCASEZ' o 'CARGA'.")
+from scripts.fitness import fitness
 
 # Función de mutación para crear variantes del mejor individuo
 def mutacion(individuo, probs):
-    # Realizar pequeñas modificaciones en el orden de camiones
+    # Realizar pequeñas modificaciones en el orden de remolques
     probabilidad = random.random()
     
     if probabilidad < probs:
@@ -27,16 +14,19 @@ def mutacion(individuo, probs):
         # 50% de las veces: Insertar un camión en una posición aleatoria
         idx1 = random.randint(0, len(individuo) - 1)
         idx2 = random.randint(0, len(individuo) - 1)
-        camion = individuo.pop(idx1)
-        individuo.insert(idx2, camion)
+        remolque = individuo.pop(idx1)
+        individuo.insert(idx2, remolque)
     
     return individuo
 
 # Estrategia evolutiva con mejora continua
-def evolve(flag, camiones, ordenes, cedis, tamano_poblacion=30, num_generaciones=20, probs=0.5):
+def evolve(remolques, ordenes, productos_urgentes, tamano_poblacion=30, num_generaciones=20, probs=0.5):
     # Generar un individuo inicial como el mejor hasta ahora
-    mejor_individuo = random.sample(camiones, len(camiones))
-    mejor_puntaje = fitness(mejor_individuo, ordenes, cedis, flag)
+    mejor_individuo = remolques
+    print("El primer individuo es el orden actual en el que entra la lista")
+    print([remolque.id_remolque for remolque in mejor_individuo])
+
+    mejor_puntaje = fitness(mejor_individuo, ordenes, productos_urgentes)
     generacion_max = 0  # Registrar la generación en la que se alcanza el mejor puntaje TEMPORAL
 
     for generacion in range(num_generaciones):
@@ -46,8 +36,8 @@ def evolve(flag, camiones, ordenes, cedis, tamano_poblacion=30, num_generaciones
         nueva_poblacion = [mutacion(list(mejor_individuo),probs) for _ in range(tamano_poblacion)]
         
         # Evaluar la nueva población para encontrar el mejor individuo
-        mejor_individuo_generacion = max(nueva_poblacion, key=lambda ind: fitness(ind, ordenes, cedis, flag))
-        mejor_puntaje_generacion = fitness(mejor_individuo_generacion, ordenes, cedis, flag)
+        mejor_individuo_generacion = max(nueva_poblacion, key=lambda ind: fitness(ind, ordenes, productos_urgentes))
+        mejor_puntaje_generacion = fitness(mejor_individuo_generacion, ordenes, productos_urgentes)
         
         # Comparar el mejor de esta generación con el mejor global
         if mejor_puntaje_generacion > mejor_puntaje:
@@ -57,7 +47,7 @@ def evolve(flag, camiones, ordenes, cedis, tamano_poblacion=30, num_generaciones
         
         # Imprimir el puntaje del mejor individuo en esta generación
         print(f"Mejor puntaje de la generación {generacion + 1}: {mejor_puntaje}")
-        print("Mejor individuo (orden de camiones):", [camion.id_camion for camion in mejor_individuo])
+        print("Mejor individuo (orden de remolques):", [remolque.id_remolque for remolque in mejor_individuo])
 
     print('-'*50)
 

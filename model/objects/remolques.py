@@ -3,6 +3,6 @@ class Remolque:
         self.id_remolque = id_remolque
         self.fecha_salida = fecha_salida
         self.origen = origen
-        self.contenido = contenido
+        self.contenido = contenido  # Lista de diccionarios con {producto: cantidad}
         self.rental = rental
-        print('Camión inicializado:',self.id_remolque)
+        # print('Remolque inicializado:',self.id_remolque)
