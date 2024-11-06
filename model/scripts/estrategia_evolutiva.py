@@ -1,5 +1,5 @@
 import random
-from scripts.fitness import producto_demandado, producto_demandado_FP, producto_demandado_PK, menor_producto, producto_escaso
+from model.scripts.fitness import producto_demandado, producto_demandado_FP, producto_demandado_PK, menor_producto, producto_escaso
 
 # Función de evaluación de la solución según la flag
 def fitness(individuo, ordenes, cedis, flag):

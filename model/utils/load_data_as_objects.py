@@ -1,7 +1,7 @@
 import csv
 from collections import defaultdict
 from model.objects.remolques import Remolque
-from objects.ordenes import Orden
+from model.objects.ordenes import Orden
 
 # def cargar_camiones(archivo_csv):
 #     camiones_dict = defaultdict(lambda: {'fecha_salida': None, 'origen': None, 'contenido': defaultdict(int)})

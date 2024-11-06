@@ -1,11 +1,11 @@
-from scripts.estrategia_evolutiva import evolve
-from objects.patio import Patio
-from objects.cedis import CEDIS
-from utils.delete_cache import delete_pycache
-from utils.response import get_response
-from utils.load_data_as_objects import cargar_camiones, cargar_ordenes
-from utils.process_input_xlsx import process_data
-from utils.install_requirements import install_requirements
+from model.scripts.estrategia_evolutiva import evolve
+from model.objects.patio import Patio
+from model.objects.cedis import CEDIS
+from model.utils.delete_cache import delete_pycache
+from model.utils.response import get_response
+from model.utils.load_data_as_objects import cargar_ordenes
+from model.utils.process_input_xlsx import process_data
+from model.utils.install_requirements import install_requirements
 install_requirements()
 
 
