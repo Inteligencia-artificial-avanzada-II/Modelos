@@ -9,7 +9,7 @@ from utils.install_requirements import install_requirements
 install_requirements()
 
 
-def main(rutaArchivoOrdenes, orderDict):
+def main(ordenes, remolques):
     errors = {}
 
     # # Step 1: Procesar el archivo de entrada

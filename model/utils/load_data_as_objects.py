@@ -1,40 +1,40 @@
 import csv
 from collections import defaultdict
-from objects.camiones import Camion
+from model.objects.remolques import Remolque
 from objects.ordenes import Orden
 
-def cargar_camiones(archivo_csv):
-    camiones_dict = defaultdict(lambda: {'fecha_salida': None, 'origen': None, 'contenido': defaultdict(int)})
+# def cargar_camiones(archivo_csv):
+#     camiones_dict = defaultdict(lambda: {'fecha_salida': None, 'origen': None, 'contenido': defaultdict(int)})
     
-    with open(archivo_csv, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            id_camion = row['id_camion']
-            producto = row['producto']
-            cantidad = int(row['cantidad'])
+#     with open(archivo_csv, newline='') as csvfile:
+#         reader = csv.DictReader(csvfile)
+#         for row in reader:
+#             id_camion = row['id_camion']
+#             producto = row['producto']
+#             cantidad = int(row['cantidad'])
             
-            # Si no tiene fecha_salida y origen, se guardan en la primera instancia
-            if camiones_dict[id_camion]['fecha_salida'] is None:
-                camiones_dict[id_camion]['fecha_salida'] = row['fecha_salida']
-                camiones_dict[id_camion]['origen'] = row['origen']
+#             # Si no tiene fecha_salida y origen, se guardan en la primera instancia
+#             if camiones_dict[id_camion]['fecha_salida'] is None:
+#                 camiones_dict[id_camion]['fecha_salida'] = row['fecha_salida']
+#                 camiones_dict[id_camion]['origen'] = row['origen']
             
-            # Acumular cantidades de productos
-            camiones_dict[id_camion]['contenido'][producto] += cantidad 
+#             # Acumular cantidades de productos
+#             camiones_dict[id_camion]['contenido'][producto] += cantidad 
     
-    # Convertir el diccionario a una lista de instancias de Camion
-    camiones = [
-        Camion(
-            id_camion=id_camion,
-            fecha_salida=info['fecha_salida'],
-            origen=info['origen'],
-            contenido=[{producto: cantidad} for producto, cantidad in info['contenido'].items()]
-        )
-        for id_camion, info in camiones_dict.items()
-    ]
+#     # Convertir el diccionario a una lista de instancias de Camion
+#     camiones = [
+#         Camion(
+#             id_camion=id_camion,
+#             fecha_salida=info['fecha_salida'],
+#             origen=info['origen'],
+#             contenido=[{producto: cantidad} for producto, cantidad in info['contenido'].items()]
+#         )
+#         for id_camion, info in camiones_dict.items()
+#     ]
 
-    print('camiones creados con éxito.')
+#     print('camiones creados con éxito.')
     
-    return camiones
+#     return camiones
 
 def cargar_ordenes(archivo_csv):
     ordenes_dict = defaultdict(lambda: {'tipo_de_orden': None, 'status': None, 'productos': defaultdict(list)})
