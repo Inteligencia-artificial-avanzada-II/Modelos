@@ -4,4 +4,4 @@ class Orden:
         self.productos = productos  # Lista de diccionarios con {producto: [cantidad original, cantidad solicitada, cantidad asignada]}
         self.tipo_de_orden = tipo_de_orden
         self.status = status
-        print('Orden inicializada:',self.id_orden)
+        # print('Orden inicializada:',self.id_orden)

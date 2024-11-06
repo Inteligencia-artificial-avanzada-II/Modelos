@@ -1,7 +1,7 @@
-def get_response(e={},propuestas={}):
+def get_response(e={},propuesta=[]):
     response = {
         "error":e,
-        "propuestas":propuestas,
+        "propuesta":propuesta,
     }
     print("RESPONSE")
     print(response)
