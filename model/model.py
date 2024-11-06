@@ -12,7 +12,7 @@ def model(remolques,ordenes,productos_urgentes):
 
     try:
         delete_pycache()
-        mejor_orden, _, gens_ = evolve(remolques, ordenes, productos_urgentes)
+        mejor_orden, mejor_puntaje, generacion_max = evolve(remolques, ordenes, productos_urgentes)
         result = [remolque.id_remolque for remolque in mejor_orden]
         print("PROPUESTA GENERADA.")
     except Exception as e:
