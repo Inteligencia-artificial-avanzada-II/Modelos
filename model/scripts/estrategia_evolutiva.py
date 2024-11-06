@@ -1,5 +1,5 @@
 import random
-from scripts.fitness import fitness
+from model.scripts.fitness import fitness
 
 # Función de mutación para crear variantes del mejor individuo
 def mutacion(individuo, probs):
