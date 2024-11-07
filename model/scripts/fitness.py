@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 def fitness(individuo, ordenes, productos_urgentes):
-    # Filtrar solo las órdenes con status "Created"
+    # Filtrar solo las órdenes con status "Created" o "Partly Allocated"
     ordenes_creadas = [orden for orden in ordenes if orden.status == "Created" or orden.status == "Partly Allocated"]
     
     # Crear un diccionario con la necesidad total de cada producto de las órdenes creadas
@@ -21,7 +21,11 @@ def fitness(individuo, ordenes, productos_urgentes):
             if item['itemDescription'] in necesidad_productos
         )
         
-        # Ponderación para remolques `rental`
+        # Incremento de peso para remolques cuyo origen es "ATL"
+        if remolque.origen == 'ATL':
+            contribucion_remolque *= 1.3  # Incremento del 30% para remolques de ATL
+
+        # Ponderación adicional para remolques `rental`
         if remolque.rental:
             contribucion_remolque *= 1.2  # Incremento del 20% por ser rental
             
