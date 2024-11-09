@@ -6,6 +6,7 @@ from controllers.mongoPredictionsController import mongoPredictionsBp
 
 app = Flask(__name__)
 app.config.from_object(Config)
+print(app.config['FLASK_HOST'])
 
 # Configuración de la conexión a MongoDB
 mongo_client = MongoClient(app.config['MONGO_URI'])
