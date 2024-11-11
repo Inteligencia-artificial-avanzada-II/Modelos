@@ -109,7 +109,7 @@ def savePrediction():
         productsList = prioritariosData.get('products')
 
         for productList in productsList:
-            products.append(productList.get('itemDescription'))
+            products.append(productList.get('descripcion'))
 
         modelo = model(remolques, ordenes, products)
         respuestModelo = modelo.get('propuesta')
