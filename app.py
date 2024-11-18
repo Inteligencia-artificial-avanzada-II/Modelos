@@ -3,9 +3,12 @@ from pymongo import MongoClient
 from config import Config
 from database.mongoConnection import getDatabase
 from controllers.mongoPredictionsController import mongoPredictionsBp
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config.from_object(Config)
+# Habilitar CORS en toda la aplicación
+CORS(app)
 
 # Configuración de la conexión a MongoDB
 mongo_client = MongoClient(app.config['MONGO_URI'])
