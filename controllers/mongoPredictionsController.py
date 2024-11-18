@@ -36,6 +36,7 @@ def savePrediction():
         )
     else:
         dataDict = json.loads(json.dumps(data))
+
     headersToken = request.headers.get('Authorization')
     token = headersToken.split('Token ')[1]
 
@@ -44,8 +45,11 @@ def savePrediction():
         "Authorization": f"Token {token}"
     }
 
+    print(headersForSent)
+
     # Validación de datos de entrada
     extraData = dataDict.get("extraData")
+    print(extraData)
 
     try:
         apiOrdenContenedorId = f'{Config.RUTA_BACK}/orden/consultarQrUrl'
@@ -56,7 +60,9 @@ def savePrediction():
         apiConsultarContenedorId = f'{Config.RUTA_BACK}/contenedor/consultar'
         apiPrioridadProductoAll = f'{
             Config.RUTA_BACK}/priorityproduct/consultarTodos'
+        print("Rutas declaradas")
         responseFosas = requests.get(apiFosasGetAll, headers=headersForSent)
+        print(responseFosas)
         dataFosas = json.loads(json.dumps(responseFosas.json()))
         fosa = dataFosas[0]
         dailyFosa = fosa['fosa']['daily']
