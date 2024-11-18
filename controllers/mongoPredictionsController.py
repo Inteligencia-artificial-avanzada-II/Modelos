@@ -26,8 +26,15 @@ def savePrediction():
     remolques = []
     ordenes = cargar_ordenes(Config.RUTA_ARCHIVO_ORDENES)
     products = []
-    data = request.json
-    print("Aquí")
+    print(request)
+    data = request.data
+    if not data:
+        return Response(
+            response=json.dumps(
+                {"message": "El cuerpo de la solicitud está vacío o no es JSON válido.", "data": {}}),
+            status=400,
+            mimetype="application/json"
+        )
     headersToken = request.headers.get('Authorization')
     token = headersToken.split('Token ')[1]
 
@@ -170,7 +177,7 @@ def savePrediction():
         }
 
         requests.post(apiListaCrearPrioridadModelo,
-                    dataForListaPrioridad, headers=headersForSent)
+                      dataForListaPrioridad, headers=headersForSent)
 
         # Guarda la predicción usando el servicio
         # prediction_id = prediction_service.savePrediction(
