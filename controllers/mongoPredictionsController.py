@@ -27,7 +27,6 @@ def savePrediction():
     ordenes = cargar_ordenes(Config.RUTA_ARCHIVO_ORDENES)
     products = []
     data = request.json
-    print(data)
     if not data:
         return Response(
             response=json.dumps(
@@ -35,6 +34,8 @@ def savePrediction():
             status=400,
             mimetype="application/json"
         )
+    else:
+        dataDict = json.loads(json.dumps(data))
     headersToken = request.headers.get('Authorization')
     token = headersToken.split('Token ')[1]
 
@@ -44,7 +45,7 @@ def savePrediction():
     }
 
     # Validación de datos de entrada
-    extraData = data.get("extraData")
+    extraData = dataDict.get("extraData")
 
     try:
         apiOrdenContenedorId = f'{Config.RUTA_BACK}/orden/consultarQrUrl'
