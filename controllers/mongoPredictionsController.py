@@ -45,11 +45,8 @@ def savePrediction():
         "Authorization": f"Token {token}"
     }
 
-    print(headersForSent)
-
     # Validación de datos de entrada
     extraData = dataDict.get("extraData")
-    print(extraData)
 
     try:
         apiOrdenContenedorId = f'{Config.RUTA_BACK}/orden/consultarQrUrl'
@@ -60,9 +57,9 @@ def savePrediction():
         apiConsultarContenedorId = f'{Config.RUTA_BACK}/contenedor/consultar'
         apiPrioridadProductoAll = f'{
             Config.RUTA_BACK}/priorityproduct/consultarTodos'
-        print("Rutas declaradas")
+
         responseFosas = requests.get(apiFosasGetAll, headers=headersForSent)
-        print(responseFosas)
+
         dataFosas = json.loads(json.dumps(responseFosas.json()))
         fosa = dataFosas[0]
         dailyFosa = fosa['fosa']['daily']
@@ -179,12 +176,21 @@ def savePrediction():
             modelo = model(remolques, ordenes, products)
             respuestModelo = modelo.get('propuesta')
 
+        print(respuestModelo)
+
         dataForListaPrioridad = {
             "contenedores": respuestModelo
         }
 
-        requests.post(apiListaCrearPrioridadModelo,
-                      dataForListaPrioridad, headers=headersForSent)
+        try:
+            requests.post(apiListaCrearPrioridadModelo, data=json.dumps(dataForListaPrioridad), headers=headersForSent)
+        except Exception as e:
+            return Response(
+                response=json.dumps(
+                    {"message": f"Lo sentimos, ocurrió un error al actualizar la lista{e}", "data": {}}),
+                status=400,
+                mimetype="application/json"
+            )
 
         # Guarda la predicción usando el servicio
         # prediction_id = prediction_service.savePrediction(
