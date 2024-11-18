@@ -24,9 +24,7 @@ def testConnection():
 @mongoPredictionsBp.route("/predict", methods=["POST"])
 def savePrediction():
     remolques = []
-    print("RUTA", f'{Config.RUTA_ARCHIVO_ORDENES}')
-    ordenes = cargar_ordenes(
-        f'https://objectstorage.mx-queretaro-1.oraclecloud.com/p/79AJJfgFXexqbvQZWz9MJ_7qJ9xLb94V9XhEAGlRZJbwkfxL1F7gZP9EOHseYtm8/n/axnhu2vnql31/b/qrprueba/o/LibroOrdenes.csv')
+    ordenes = cargar_ordenes(Config.RUTA_ARCHIVO_ORDENES)
     products = []
     data = request.json
     headersToken = request.headers.get('Authorization')
@@ -37,44 +35,84 @@ def savePrediction():
     }
 
     # Validación de datos de entrada
-    input_data = data.get("input_data")
-
-    if not input_data:
-        return Response(
-            response=json.dumps(
-                {"error": "Datos de entrada o respuesta de predicción faltantes"}),
-            status=400,
-            mimetype="application/json"
-        )
+    extraData = data.get("extraData")
 
     try:
         apiOrdenContenedorId = f'{Config.RUTA_BACK}/orden/consultarQrUrl'
         apiFosasGetAll = f'{Config.RUTA_BACK}/fosa/consultarTodos'
         apiOrdenMongoId = f'{Config.RUTA_BACK}/ordenmongo/consultar'
+        apiListaCrearPrioridadModelo = f'{
+            Config.RUTA_BACK}/listaprioridadcontenedor/crear'
+        apiConsultarContenedorId = f'{Config.RUTA_BACK}/contenedor/consultar'
         apiPrioridadProductoAll = f'{
             Config.RUTA_BACK}/priorityproduct/consultarTodos'
         responseFosas = requests.get(apiFosasGetAll)
         dataFosas = json.loads(json.dumps(responseFosas.json()))
-        allFosas = dataFosas[0]['fosas']
+        fosa = dataFosas[0]
+        dailyFosa = fosa['fosa']['daily']
+        fechaNow = "18/11/24"  # datetime.now().strftime("%d/%m/%Y")
+        dailyFechaData = dailyFosa.get(fechaNow)
 
-        for fosa in allFosas:
-            dailyFosa = fosa['daily']
-            fechaNow = '10/10/24'  # datetime.now().strftime("%d/%m/%Y")
+        if not dailyFechaData:
+            return Response(
+                response=json.dumps(
+                    {"message": "No se encontraron remolques en fosas el día de hoy", "data": {}}),
+                status=400,
+                mimetype="application/json"
+            )
 
-            dailyFechaData = dailyFosa.get(fechaNow)
-            contenedorIdKey = next(
-                iter(dailyFechaData.keys())) if dailyFechaData else None
-            contenedorId = contenedorIdKey.split(
-                '-')[0] if contenedorIdKey else None
+        for dailyFechaKey, dailyFechaValue in dailyFechaData.items():
 
-            responseOrdenData = requests.get(
-                f'{apiOrdenContenedorId}/{contenedorId}', headers=headersForSent) if contenedorId else None
+            if not dailyFechaValue:
+                continue
+
+            contenedorId = dailyFechaKey.split(
+                '-')[0] if dailyFechaKey else None
+
+            try:
+                responseOrdenData = requests.get(
+                    f'{apiOrdenContenedorId}/{contenedorId}', headers=headersForSent) if contenedorId else None
+            except Exception as e:
+                return Response(
+                    response=json.dumps(
+                        {"message": f"No se encontraron remolques por ordenar {e}", "data": {}}),
+                    status=400,
+                    mimetype="application/json"
+                )
+
+            try:
+                responseContenedorId = requests.get(
+                    f'{apiConsultarContenedorId}/{contenedorId}', headers=headersForSent) if contenedorId else None
+            except Exception as e:
+                return Response(
+                    response=json.dumps(
+                        {"message": f"No se encontraron remolques por ordenar {e}", "data": {}}),
+                    status=400,
+                    mimetype="application/json"
+                )
+
+            if responseOrdenData.status_code != 200 != responseContenedorId.status_code:
+                return Response(
+                    response=json.dumps(
+                        {"message": "Lo sentimos, no se encontró el contenedor o una orden relacionada al contenedor", "data": {}}),
+                    status=400,
+                    mimetype="application/json"
+                )
+
+            dataContenedorId = responseContenedorId.json()
+
+            rentalContenedor = dataContenedorId.get('rental', False)
 
             ordenSqlData = responseOrdenData.json(
             )['data'] if responseOrdenData else None
 
             if not ordenSqlData:
-                continue
+                return Response(
+                    response=json.dumps(
+                        {"message": "No se encontraron órdenes relacionadas al remolque el día de hoy", "data": {}}),
+                    status=400,
+                    mimetype="application/json"
+                )
             ordenMongoId = ordenSqlData.get(
                 'idMongoProductos') if ordenSqlData else None
             responseOrdenMongoData = requests.get(
@@ -93,13 +131,13 @@ def savePrediction():
                 productoContenido['salePrice'] = float(productoContenido['salePrice']) if productoContenido.get(
                     'salePrice') else productoContenido['salePrice']
 
-                print(productoContenido)
-
             # Creamos la lista de los camiones
             remolque = Remolque(id_remolque=contenedorId, fecha_salida=fechaSalida,
-                                origen=origen, contenido=productosContenido, rental=True)
+                                origen=origen, contenido=productosContenido, rental=rentalContenedor)
 
             remolques.append(remolque if remolque else None)
+            set(remolques)
+            print(remolques)
 
         # Obtenemos productos prioritarios
         responsePrioritarios = requests.get(
@@ -111,14 +149,33 @@ def savePrediction():
         for productList in productsList:
             products.append(productList.get('descripcion'))
 
-        modelo = model(remolques, ordenes, products)
-        respuestModelo = modelo.get('propuesta')
+        if not remolques:
+            return Response(
+                response=json.dumps(
+                    {"message": "No se encontraron remolques por ordenar", "data": {}}),
+                status=400,
+                mimetype="application/json"
+            )
+
+        if len(remolques) == 1:
+            respuestModelo = [remolques[0].id_remolque]
+        else:
+            modelo = model(remolques, ordenes, products)
+            respuestModelo = modelo.get('propuesta')
+
+        dataForListaPrioridad = {
+            "contenedores": respuestModelo
+        }
+
+        requests.post(apiListaCrearPrioridadModelo,
+                    dataForListaPrioridad, headers=headersForSent)
+
         # Guarda la predicción usando el servicio
         # prediction_id = prediction_service.savePrediction(
         #     input_data, prediction_response)
         return Response(
             response=json.dumps(
-                {"message": "Prediccion realizada y guardada exitosamente", "data": respuestModelo}),
+                {"message": "Prediccion realizada exitosamente", "data": respuestModelo}),
             status=201,
             mimetype="application/json"
         )
