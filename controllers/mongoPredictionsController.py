@@ -26,7 +26,7 @@ def savePrediction():
     remolques = []
     ordenes = cargar_ordenes(Config.RUTA_ARCHIVO_ORDENES)
     products = []
-    print(request)
+    print(request.json)
     data = request.data
     if not data:
         return Response(
