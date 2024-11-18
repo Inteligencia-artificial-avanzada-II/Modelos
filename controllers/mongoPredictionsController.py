@@ -31,6 +31,7 @@ def savePrediction():
     token = headersToken.split('Token ')[1]
 
     headersForSent = {
+        'Content-Type': 'application/json',
         "Authorization": f"Token {token}"
     }
 
