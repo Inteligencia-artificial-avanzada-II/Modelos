@@ -27,6 +27,7 @@ def savePrediction():
     ordenes = cargar_ordenes(Config.RUTA_ARCHIVO_ORDENES)
     products = []
     data = request.json
+    print("Aquí")
     headersToken = request.headers.get('Authorization')
     token = headersToken.split('Token ')[1]
 
@@ -47,7 +48,7 @@ def savePrediction():
         apiConsultarContenedorId = f'{Config.RUTA_BACK}/contenedor/consultar'
         apiPrioridadProductoAll = f'{
             Config.RUTA_BACK}/priorityproduct/consultarTodos'
-        responseFosas = requests.get(apiFosasGetAll)
+        responseFosas = requests.get(apiFosasGetAll, headers=headersForSent)
         dataFosas = json.loads(json.dumps(responseFosas.json()))
         fosa = dataFosas[0]
         dailyFosa = fosa['fosa']['daily']
