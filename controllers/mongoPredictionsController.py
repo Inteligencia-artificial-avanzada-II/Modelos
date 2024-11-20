@@ -63,7 +63,7 @@ def savePrediction():
         dataFosas = json.loads(json.dumps(responseFosas.json()))
         fosa = dataFosas[0]
         dailyFosa = fosa['fosa']['daily']
-        fechaNow = "18/11/24"  # datetime.now().strftime("%d/%m/%Y")
+        fechaNow = datetime.now().strftime("%d/%m/%Y")
         dailyFechaData = dailyFosa.get(fechaNow)
 
         if not dailyFechaData:
