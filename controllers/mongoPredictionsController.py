@@ -63,8 +63,7 @@ def savePrediction():
         dataFosas = json.loads(json.dumps(responseFosas.json()))
         fosa = dataFosas[0]
         dailyFosa = fosa['fosa']['daily']
-        fechaNow = datetime.now().strftime("%d/%m/%Y")
-        print(fechaNow)
+        fechaNow = datetime.now().strftime("%d/%m/%y")
         dailyFechaData = dailyFosa.get(fechaNow)
 
         if not dailyFechaData:
@@ -150,8 +149,6 @@ def savePrediction():
                                 origen=origen, contenido=productosContenido, rental=rentalContenedor)
 
             remolques.append(remolque if remolque else None)
-            set(remolques)
-            print(remolques)
 
         # Obtenemos productos prioritarios
         responsePrioritarios = requests.get(
@@ -176,8 +173,6 @@ def savePrediction():
         else:
             modelo = model(remolques, ordenes, products)
             respuestModelo = modelo.get('propuesta')
-
-        print(respuestModelo)
 
         dataForListaPrioridad = {
             "contenedores": respuestModelo
