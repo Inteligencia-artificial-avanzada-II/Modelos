@@ -64,6 +64,7 @@ def savePrediction():
         fosa = dataFosas[0]
         dailyFosa = fosa['fosa']['daily']
         fechaNow = datetime.now().strftime("%d/%m/%Y")
+        print(fechaNow)
         dailyFechaData = dailyFosa.get(fechaNow)
 
         if not dailyFechaData:
