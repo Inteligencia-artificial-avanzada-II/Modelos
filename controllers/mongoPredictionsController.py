@@ -24,6 +24,7 @@ def testConnection():
 @mongoPredictionsBp.route("/predict", methods=["POST"])
 def savePrediction():
     remolques = []
+    listaValidacion = []
     ordenes = cargar_ordenes(Config.RUTA_ARCHIVO_ORDENES)
     products = []
     data = request.json
@@ -81,6 +82,9 @@ def savePrediction():
 
             contenedorId = dailyFechaKey.split(
                 '-')[0] if dailyFechaKey else None
+            
+            if contenedorId in listaValidacion:
+                continue 
 
             try:
                 responseOrdenData = requests.get(
@@ -147,7 +151,8 @@ def savePrediction():
             # Creamos la lista de los camiones
             remolque = Remolque(id_remolque=contenedorId, fecha_salida=fechaSalida,
                                 origen=origen, contenido=productosContenido, rental=rentalContenedor)
-
+            # Agregamos los contenedores a nuestra lista de validación y a la lista a enviar
+            listaValidacion.append(contenedorId)
             remolques.append(remolque if remolque else None)
 
         # Obtenemos productos prioritarios
