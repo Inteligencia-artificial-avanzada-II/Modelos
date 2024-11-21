@@ -1,6 +1,7 @@
 from flask import Blueprint, request, Response
 import requests
 from datetime import datetime
+import pytz
 import json
 from managers.mongoPredictionsServices import PredictionService
 from model.objects.remolques import Remolque
@@ -64,7 +65,10 @@ def savePrediction():
         dataFosas = json.loads(json.dumps(responseFosas.json()))
         fosa = dataFosas[0]
         dailyFosa = fosa['fosa']['daily']
-        fechaNow = datetime.now().strftime("%d/%m/%y")
+        # Zona horaria de México
+        mexicoTimeZone = pytz.timezone('America/Mexico_City')
+        # Obtener la fecha actual en la zona horaria de México
+        fechaNow = datetime.now(mexicoTimeZone).strftime("%d/%m/%y")
         print(fechaNow)
         dailyFechaData = dailyFosa.get(fechaNow)
 
