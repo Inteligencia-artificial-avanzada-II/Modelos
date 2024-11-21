@@ -70,7 +70,7 @@ def savePrediction():
         if not dailyFechaData:
             return Response(
                 response=json.dumps(
-                    {"message": "No se encontraron remolques en fosas el día de hoy", "data": {}}),
+                    {"message": f"No se encontraron remolques en fosas el día de hoy {dailyFechaData}", "data": {}}),
                 status=400,
                 mimetype="application/json"
             )
