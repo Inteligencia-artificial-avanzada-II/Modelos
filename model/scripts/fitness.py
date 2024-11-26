@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-def fitness(individuo, ordenes, productos_urgentes):
+def fitness(individuo, ordenes, productos_urgentes, incremento_rentado, incremento_ubicacion):
     # Filtrar solo las órdenes con status "Created" o "Partly Allocated"
     ordenes_creadas = [orden for orden in ordenes if orden.status == "Created" or orden.status == "Partly Allocated"]
     
@@ -23,13 +23,19 @@ def fitness(individuo, ordenes, productos_urgentes):
         
         # Incremento de peso para remolques cuyo origen es "ATL"
         if remolque.origen == 'ATL':
-            contribucion_remolque *= 1.3  # Incremento del 30% para remolques de ATL
+            contribucion_remolque *= ((contribucion_remolque + 5) * incremento_ubicacion) if contribucion_remolque == 0 else (contribucion_remolque * incremento_ubicacion)
+        else:
+            penalizacion_posicion = (len(individuo) - posicion) * 0.02
+            contribucion_remolque *= 1 - penalizacion_posicion
 
         # Ponderación adicional para remolques `rental`
         if remolque.rental:
-            contribucion_remolque *= 1.2  # Incremento del 20% por ser rental
-            
-        # Puntaje adicional si el remolque contiene productos urgentes
+            contribucion_remolque = ((contribucion_remolque + 10) * incremento_rentado) if contribucion_remolque == 0 else (contribucion_remolque * incremento_rentado)
+        else:
+            penalizacion_posicion = (len(individuo) - posicion) * 0.03
+            contribucion_remolque *= 1 - penalizacion_posicion
+
+        # Puntaje adicional si el remolque contiene productos urgente
         if productos_urgentes:
             contribucion_remolque += sum(
                 int(item['requestedQuantity'])

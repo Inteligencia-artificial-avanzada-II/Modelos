@@ -20,13 +20,15 @@ def mutacion(individuo, probs):
     return individuo
 
 # Estrategia evolutiva con mejora continua
-def evolve(remolques, ordenes, productos_urgentes, tamano_poblacion=30, num_generaciones=20, probs=0.5):
+def evolve(remolques, ordenes, productos_urgentes, tamano_poblacion=100, num_generaciones=50, probs=0.5, incremento_rentado=80, incremento_ubicacion=20):
     # Generar un individuo inicial como el mejor hasta ahora
-    mejor_individuo = remolques
+    # mejor_individuo = remolques
+    mejor_individuo = remolques[:]
+    random.shuffle(mejor_individuo)
     print("El primer individuo es el orden actual en el que entra la lista")
     print([remolque.id_remolque for remolque in mejor_individuo])
 
-    mejor_puntaje = fitness(mejor_individuo, ordenes, productos_urgentes)
+    mejor_puntaje = fitness(mejor_individuo, ordenes, productos_urgentes, incremento_rentado, incremento_ubicacion)
     generacion_max = 0  # Registrar la generación en la que se alcanza el mejor puntaje TEMPORAL
 
     for generacion in range(num_generaciones):
@@ -36,8 +38,8 @@ def evolve(remolques, ordenes, productos_urgentes, tamano_poblacion=30, num_gene
         nueva_poblacion = [mutacion(list(mejor_individuo),probs) for _ in range(tamano_poblacion)]
         
         # Evaluar la nueva población para encontrar el mejor individuo
-        mejor_individuo_generacion = max(nueva_poblacion, key=lambda ind: fitness(ind, ordenes, productos_urgentes))
-        mejor_puntaje_generacion = fitness(mejor_individuo_generacion, ordenes, productos_urgentes)
+        mejor_individuo_generacion = max(nueva_poblacion, key=lambda ind: fitness(ind, ordenes, productos_urgentes, incremento_rentado, incremento_ubicacion))
+        mejor_puntaje_generacion = fitness(mejor_individuo_generacion, ordenes, productos_urgentes, incremento_rentado, incremento_ubicacion)
         
         # Comparar el mejor de esta generación con el mejor global
         if mejor_puntaje_generacion > mejor_puntaje:
