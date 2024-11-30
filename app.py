@@ -14,7 +14,9 @@ CORS(app)
 mongo_client = MongoClient(app.config['MONGO_URI'])
 db = getDatabase()
 
+# Registramos nuestra ruta que redirigirá hacia nuestro controlador de predicciones
 app.register_blueprint(mongoPredictionsBp, url_prefix="/predictions")
 
 if __name__ == "__main__":
+    # Corre el servidor de flask
     app.run(host=app.config['FLASK_HOST'], port=int(app.config['FLASK_PORT']), debug=bool(app.config['FLASK_DEBUG']))
